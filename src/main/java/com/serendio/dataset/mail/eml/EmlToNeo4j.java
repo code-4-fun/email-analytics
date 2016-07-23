@@ -60,6 +60,7 @@ public class EmlToNeo4j {
 						bufferedWriter.newLine();
 						bufferedWriter.close();
 					} catch (Exception e) {
+						e.printStackTrace();
 						FileWriter writer = new FileWriter("ErrorFiles1.txt");
 						BufferedWriter bufferedWriter = new BufferedWriter(
 								writer);

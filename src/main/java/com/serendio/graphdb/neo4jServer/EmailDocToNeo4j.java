@@ -14,11 +14,12 @@ public class EmailDocToNeo4j {
 		processUserNodes(emailObject);
 		processEmailNodes(emailObject);
 		processLinks(emailObject);
-		System.out.println("EmailDoc Pushed to Neo4j");
+		System.err.println("EmailDoc Pushed to Neo4j");
 	}
 
 	public void processLinks(EmailDoc emailObject) {
 		Neo4jGraphCreation graphi = new Neo4jGraphCreation();
+
 
 		if (emailObject.getFrom() != null)
 			graphi.createUniqueLink(emailObject.getFrom(),
@@ -50,6 +51,7 @@ public class EmailDocToNeo4j {
 			graphi.createUniqueLink(emailObject.getReplyMessage_ID(),
 					emailObject.getMessage_ID(), "FORWARD", "RESPONSE");
 		}
+		System.err.println("EmailDoc Links Processed "+emailObject.getMessage_ID());
 		graphi.closeConnection();
 
 	}

@@ -26,6 +26,7 @@ public class Neo4jGraphCreation {
 	public void createEmailNode(String Message_ID, String Date,
 			long EpochTimestamp, String Subject, String Content,
 			String ReplyMessage_ID, String Topic, String Sentiment) {
+		System.err.println("Creating Email "+Message_ID+" "+Subject);
 		String queryString = null;
 		if (ReplyMessage_ID != null)
 			queryString = "MERGE (n:Email:Reply {Message_ID: {Message_ID} , Date: {Date} , EpochTimestamp: {EpochTimestamp}, Subject: {Subject} , Content: {Content} , Topic: {Topic} , Sentiment: {Sentiment}}) RETURN n";
@@ -54,37 +55,33 @@ public class Neo4jGraphCreation {
 			String Direction, String Relation) {
 		String query = null;
 		if (Relation.equals("RESPONSE")) {
-			query = "match (a:Email),(b:Email) Where a.Message_ID=\""
-					+ SourceEmail + "\"AND b.Message_ID=\""
-					+ DestinationMail_ID + "\" merge (a)-[r:Link {Relation: '"
-					+ Relation + "'}]->(b)";
+			query = "match (a:Email),(b:Email) Where a.Message_ID={SourceEmail} "
+					+ " AND b.Message_ID= {DestinationMail_ID}"
+					+ " merge (a)-[r:`"+ Relation + "`]->(b)";
 		} else {
 			if (Direction.equals("FORWARD"))
-				query = "match (a:User),(b:Email) Where a.Email=\""
-						+ SourceEmail + "\"AND b.Message_ID=\""
-						+ DestinationMail_ID
-						+ "\" merge (a)-[r:Link {Relation: '" + Relation
-						+ "'}]->(b)";
+				query = "match (a:User),(b:Email) Where a.Email={SourceEmail} "
+						+ " AND b.Message_ID={DestinationMail_ID} "
+						+ " merge (a)-[r:`"+ Relation + "`]->(b)";
 			else if (Direction.equals("BACKWORD"))
-				query = "match (a:User),(b:Email) Where a.Email=\""
-						+ SourceEmail + "\"AND b.Message_ID=\""
-						+ DestinationMail_ID
-						+ "\" merge (a)<-[r:Link {Relation: '" + Relation
-						+ "'}]-(b)";
+				query = "match (a:User),(b:Email) Where a.Email={SourceEmail} "
+						+ " AND b.Message_ID= {DestinationMail_ID}"
+						+ " merge (a)-[r:`"+ Relation + "`]->(b)";
 		}
-		this.session.run(query);
+		Map<String, Object> parameters = new HashMap<>();
+		parameters.put("SourceEmail", SourceEmail);
+		parameters.put("DestinationMail_ID", DestinationMail_ID);
+		parameters.put("Relation", Relation);
+		this.session.run(query,parameters);
 	}
 
 	public void createUserNode(String Name, String Email) {
-		String queryString = "MERGE (n:User {Email: {Email}}) RETURN n";
+		System.err.println("Creating User "+Email);
+
+		String queryString = "MERGE (n:User {Email: {Email}}) ON CREATE SET n.Name = {Name}";
 		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("Email", Email);
-		this.session.run(queryString, parameters);
-		if (Name != null) {
-			queryString = "MATCH (n { Email: {Email} }) SET n.Name = {Name} RETURN n";
 			parameters.put("Email", Email);
 			parameters.put("Name", Name);
-			this.session.run(queryString, parameters);
-		}
+		this.session.run(queryString, parameters);
 	}
 }
