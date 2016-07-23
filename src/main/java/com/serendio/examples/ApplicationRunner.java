@@ -17,6 +17,7 @@ public class ApplicationRunner {
 		String option = null;
 		System.out.println("Email Ingestion Module:-");
 		System.out.println("------------------------");
+        conf = setPassword(conf);
 		conf = setInputDatasetPath(conf);
 		conf = setDatasetType(conf);
 		System.out.println();
@@ -40,6 +41,16 @@ public class ApplicationRunner {
 		System.out.println("Enter Absolute path of input email dataset:");
 		path = br.readLine();
 		conf.setINPUT_PATH(path);
+		return conf;
+	}
+
+	public static AppConfigurations setPassword(AppConfigurations conf)
+			throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String password = null;
+		System.out.println("Enter Neo4j Password:");
+		password = br.readLine();
+		conf.setPassword(password);
 		return conf;
 	}
 

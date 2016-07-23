@@ -13,9 +13,9 @@ public class Neo4jGraphCreation {
 	public Driver driver;
 	public Session session;
 
-	Neo4jGraphCreation() {
+	Neo4jGraphCreation(String password) {
 		this.driver = GraphDatabase.driver("bolt://localhost",
-				AuthTokens.basic("neo4j", "123456"));
+				AuthTokens.basic("neo4j", password));
 		this.session = driver.session();
 	}
 

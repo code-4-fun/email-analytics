@@ -1,6 +1,7 @@
 package com.serendio.configuration;
 
 public class AppConfigurations {
+	private static String PASSWORD = null;
 	private static String INPUT_PATH = null;
 	private static String INPUT_DATASET_TYPE = null;
 	private static boolean SENTIMENT_ANALYSIS = false;
@@ -40,6 +41,14 @@ public class AppConfigurations {
 
 	public String getDatasetType() {
 		return INPUT_DATASET_TYPE;
+	}
+
+	public static void setPassword(String password) {
+		PASSWORD = password;
+	}
+
+	public static String getPassword() {
+		return PASSWORD;
 	}
 
 }

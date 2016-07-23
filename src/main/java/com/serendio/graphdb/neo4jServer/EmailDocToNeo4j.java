@@ -4,21 +4,23 @@ import com.serendio.dataset.domain.EmailDoc;
 import java.io.FileNotFoundException;
 import org.apache.http.client.ClientProtocolException;
 import java.io.IOException;
+import com.serendio.configuration.AppConfigurations;
 
 public class EmailDocToNeo4j {
 
-	public Neo4jGraphCreation graph;
+	public Neo4jGraphCreation graphi;
 
 	public void pushToNeo4j(EmailDoc emailObject) throws FileNotFoundException,
 			ClientProtocolException, IOException {
+		this.graphi = new Neo4jGraphCreation(AppConfigurations.getPassword());
 		processUserNodes(emailObject);
 		processEmailNodes(emailObject);
 		processLinks(emailObject);
 		System.err.println("EmailDoc Pushed to Neo4j");
+		graphi.closeConnection();
 	}
 
 	public void processLinks(EmailDoc emailObject) {
-		Neo4jGraphCreation graphi = new Neo4jGraphCreation();
 
 
 		if (emailObject.getFrom() != null)
@@ -52,23 +54,17 @@ public class EmailDocToNeo4j {
 					emailObject.getMessage_ID(), "FORWARD", "RESPONSE");
 		}
 		System.err.println("EmailDoc Links Processed "+emailObject.getMessage_ID());
-		graphi.closeConnection();
-
 	}
 
 	public void processEmailNodes(EmailDoc emailObject) {
-		Neo4jGraphCreation graphi = new Neo4jGraphCreation();
 		graphi.createEmailNode(emailObject.getMessage_ID(),
 				emailObject.getDate(), emailObject.getEpochTimeStamp(),
 				emailObject.getSubject(), emailObject.getContent(),
 				emailObject.getReplyMessage_ID(), emailObject.getTopic(),
 				emailObject.getSentiment());
-		graphi.closeConnection();
 	}
 
 	public void processUserNodes(EmailDoc emailObject) {
-		Neo4jGraphCreation graphi = new Neo4jGraphCreation();
-
 		graphi.createUserNode(emailObject.getName(), emailObject.getFrom());
 
 		if (emailObject.getTo() != null)
@@ -88,6 +84,5 @@ public class EmailDocToNeo4j {
 					new String[emailObject.getBcc().size()])) {
 				graphi.createUserNode(null, toAddress);
 			}
-		graphi.closeConnection();
 	}
 }
