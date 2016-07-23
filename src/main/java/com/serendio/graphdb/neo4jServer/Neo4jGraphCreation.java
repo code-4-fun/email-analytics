@@ -26,12 +26,10 @@ public class Neo4jGraphCreation {
 	public void createEmailNode(String Message_ID, String Date,
 			long EpochTimestamp, String Subject, String Content,
 			String ReplyMessage_ID, String Topic, String Sentiment) {
-		System.err.println("Creating Email "+Message_ID+" "+Subject);
-		String queryString = null;
+		System.err.println("Creating Email "+Message_ID+" subject "+Subject);
+		String queryString = "MERGE (n:Email {Message_ID: {Message_ID}}) ON CREATE SET n.Date={Date} , n.EpochTimestamp={EpochTimestamp}, n.Subject={Subject} , n.Content={Content} , n.Topic={Topic} , n.Sentiment={Sentiment}";
 		if (ReplyMessage_ID != null)
-			queryString = "MERGE (n:Email:Reply {Message_ID: {Message_ID} , Date: {Date} , EpochTimestamp: {EpochTimestamp}, Subject: {Subject} , Content: {Content} , Topic: {Topic} , Sentiment: {Sentiment}}) RETURN n";
-		else
-			queryString = "MERGE (n:Email {Message_ID: {Message_ID} , Date: {Date} , EpochTimestamp: {EpochTimestamp}, Subject: {Subject} , Content: {Content} , Topic: {Topic} , Sentiment: {Sentiment}}) RETURN n";
+			queryString += ", n:Reply";
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("Message_ID", Message_ID);
 		parameters.put("Date", Date);
